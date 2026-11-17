@@ -9,7 +9,7 @@ from app.models import Heartbeat
 def test_health_and_home(client):
     assert client.get("/health").status_code == 200
     r = client.get("/")
-    assert r.status_code == 200 and b"Sign in" in r.content
+    assert r.status_code == 200 and b"Sign in" not in r.content
 
 
 @pytest.mark.django_db
@@ -46,3 +46,19 @@ def test_the_description_is_escaped(client, tmp_path, monkeypatch):
     monkeypatch.setattr(context, "_DESCRIPTION", d)
     body = client.get("/").content.decode()
     assert "&lt;script&gt;" in body and "<script>alert" not in body and "{{ evil }}" in body
+
+
+@pytest.mark.django_db
+def test_showcase_filter_and_detail(client):
+    from app.models import Project, Technology
+    assert Project.objects.filter(slug="shopping").exists()  # from the data migration
+    htmx = Technology.objects.create(name="HTMX", slug="htmx")
+    other = Project.objects.create(name="Other", slug="other", summary="x")
+    other.technologies.add(htmx)
+    Project.objects.create(name="Hidden", slug="hidden", summary="x", published=False)
+    body = client.get("/").content.decode()
+    assert "shopping" in body and "Other" in body and "Hidden" not in body
+    body = client.get("/?tech=htmx").content.decode()
+    assert "Other" in body and "A family shared shopping list" not in body
+    assert client.get("/projects/shopping/").status_code == 200
+    assert client.get("/projects/hidden/").status_code == 404

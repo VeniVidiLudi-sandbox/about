@@ -1,0 +1,11 @@
+{% extends "app/base.html" %}
+{% block title %}{{ project.name }} · About{% endblock %}
+{% block content %}
+<p><a href="{% url 'home' %}">← All projects</a></p>
+<h1>{{ project.name }}</h1>
+<p>{{ project.summary }}</p>
+<div class="tags">{% for t in project.technologies.all %}<a class="tag" href="{% url 'home' %}?tech={{ t.slug }}">{{ t.name }}</a>{% endfor %}</div>
+{% if project.screenshot_url %}<p><img class="shot" src="{{ project.screenshot_url }}" alt="Screenshot of {{ project.name }}"></p>{% endif %}
+{% if project.description %}<p style="white-space:pre-line">{{ project.description }}</p>{% endif %}
+<p class="actions">{% if project.url %}<a href="{{ project.url }}" rel="noopener">Visit site ↗</a>{% endif %}{% if project.repo_url %}<a href="{{ project.repo_url }}" rel="noopener">Source code ↗</a>{% endif %}</p>
+{% endblock %}

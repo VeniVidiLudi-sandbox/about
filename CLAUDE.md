@@ -1,7 +1,11 @@
 # About
 
-(The worker fills this in from the brief: what the app is for, who uses it, its core features.
-The brief's first line is in `app/description.txt`, which the home page shows.)
+A public, unauthenticated showcase of the owner's personal projects and the tech stack each uses.
+Visitors (friends, collaborators, employers) see project cards (name, summary, live link, tech tags);
+clicking a tag filters by technology (`/?tech=<slug>`); each project has a detail page
+(`/projects/<slug>/`: longer text, screenshot URL, repo link). Content is managed only by the owner in
+the Django admin (`Project`, `Technology`); there is no visitor login. A data migration adds the example
+project "shopping". The brief's first line is in `app/description.txt`, which the home page shows.
 
 ## How this repo works
 - Django 5.2 + Postgres, started from the platform's Django template. The platform's rules are in
@@ -14,4 +18,7 @@ The brief's first line is in `app/description.txt`, which the home page shows.)
 - Migrations must also work with the previous release's code (add now, remove later).
 
 ## Next steps
-(The worker keeps this list for the owner.)
+- Add the rest of the projects in `/admin/` (sign in via the platform login as a `superadmin` member).
+- Screenshots are plain image URLs (`screenshot_url`); upload support would need media storage in `DATA_DIR`.
+- The sign-in link was removed from the home page; admin is reached at `/admin/` (check it triggers OIDC login).
+- Possible: Open Graph tags, a short "about me" intro block.
